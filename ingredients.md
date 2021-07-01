@@ -1,5 +1,5 @@
 <h2> E-Waste Servo</h2>
-A Simple 5(3 signal 2 power/ground) wire servo- two for motor drive and one feed back
+A Simple 5(3 signal + power/ground) wire servo
 
 <ul>
 	<li> DVD Drive Ejection Mechanism (this is what gears down the DC motor and was used for some mechanical components to mount the potentiometer)</li>
