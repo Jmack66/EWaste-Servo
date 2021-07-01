@@ -4,7 +4,7 @@ EWServo servo = EWServo(23,22,21);
 
 void setup() {
 Serial.begin(115200);
-servo.setLims(1,420);
+servo.max_analog = 400;
 }
 
 //Simple Example that uses W and S keys to move the servo up and down
