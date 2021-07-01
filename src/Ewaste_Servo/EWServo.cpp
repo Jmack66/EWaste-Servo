@@ -64,7 +64,7 @@ bool EWServo::write(int pos) {
 }
 
 bool EWServo::checkBounds(int pos, int pot_pos) {
-  if (pos <= min_servo + tolerance || pos >= max_servo - tolerance || pot_pos + tolerance > max_analog || pot_pos - tolerance < min_analog) {
+  if (pos <= min_servo + tolerance || pos >= max_servo - tolerance) {
     driveStop();
     Serial.println("ERROR: Position request out of bounds");
     return false;
