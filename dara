@@ -1,0 +1,53 @@
+Experiment: Servo Speed with Octopus Arm load
+
+
+Drive signal 150,
+from 360 to 10 took 1.772 seconds
+360, trial 2, 2.017
+350, trial 3, 5.555
+
+360, 1.772
+360,2.017
+350,5.555
+
+Struggled at halfway to deal with forces on trial 3
+
+Drive signal 170,
+362, 1.717 
+345, 1.683
+348, 1.632 
+
+Drive Singal 190,
+372, 1.501
+363, 1.539
+363, 1.487
+
+drive signal 210,
+365,0.470
+361,0.450
+361,0.439
+
+drive signal 230,
+368,0.399
+367,0.378
+328, 0.381
+
+drive signal 250,
+371,0.333
+371,0.313
+366,0.346
+
+
+
+drive signal 700,
+373, 0.321
+364, 0.312
+363,0.314
+
+
+Some thoughts on the system: 
+
+if we can determine the force the octopus arm exterts then we could measure the current and find the torque constant of the motor, once we have the torque constant we can derive the lqr control gains from the dynamics simply. 
+
+
+
