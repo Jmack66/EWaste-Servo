@@ -9,7 +9,7 @@
 class EWServo {
   public:
     EWServo(int in1, int in2, int out);
-    void testAnalogExtremes(int drive);
+    int* testAnalogExtremes(int drive);
     bool write(int pos);
     void stop();
     void setLims(int min, int max);
@@ -24,6 +24,7 @@ class EWServo {
     void setPIDGains(float kp = 0.1f, float ki = 0.1f, float kd = 0.1f);
     void setDrive(int min = 170, int max = 400);
     float testSpeed(int drive);
+    void autoCalibrate();
     void driveStop();
     int min_analog = 0;
     int max_analog = 400;

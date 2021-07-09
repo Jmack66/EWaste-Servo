@@ -38,10 +38,20 @@ void EWServo::setDrive(int min, int max) {
   pid->setSaturation(min, max);
 }
 
-void EWServo::testAnalogExtremes(int drive) {
+void EWServo::autoCalibrate(){
+   int min_d = testMinDriveSignal() + 30; // +30 is a buffer to ensure motion
+   int *ex = testAnalogExtremes(min_d + 50);
+   max_analog = *(ex);
+   min_analog = *(ex+1);
+   setDrive(min_d ,min_d + 150);
+}
+
+
+int* EWServo::testAnalogExtremes(int drive) {
   //drive for a little check if the change in pot is meaningful then go the same in the other direction
   bool min_found = false;
   bool max_found = false;
+  int extremes[2];
   while (!min_found || !max_found) {
     driveStop();
     float start = micros() / 1000000.0f;
@@ -61,17 +71,18 @@ void EWServo::testAnalogExtremes(int drive) {
     if (abs(start_pos - pot_pos) < 6) {
       if (min_found) {
         max_found = true;
-        max_analog = pot_pos;
+        extremes[0] = pot_pos;
       } else {
         delay(1000);
         min_found = true;
-        min_analog = pot_pos;
+        extremes[1] = pot_pos;
       }
     }
   }
   driveStop();
   LOGN("Max pot pos: " + String(max_analog));
   LOGN("Min pot pos: " + String(min_analog));
+  return extremes;
 }
 
 //There's a weird bug in this where it will not maintain position unless its told to hold it infinitely...

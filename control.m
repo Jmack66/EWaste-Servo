@@ -8,5 +8,10 @@ kappa = 0.0829;
 % K = lqr(A,B,Q,R);
 
 sys = tf(1,[0 kappa 0])
-step(sys)
-pidTuner(sys,'PID')
+%step(sys)
+c_pid = pidTuner(sys,'PID')
+T_pid = feedback(C*sys,1);
+[y,tOut] = step(T_pid)
+
+A = [tOut(:) y(:)];
+writematrix(A,'PIDTune2.csv');

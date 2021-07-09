@@ -11,17 +11,20 @@ void setup() {
   //Serial.println(servo.testSpeed(140));
   servo.setDrive(180,400);
   //servo.testPositionControl(90);
-  //servo.calibrate(220);
+  //servo.testAnalogExtremes(220);
 
 }
 
 
 //Simple Example that uses W and S keys to move the servo up and down
 void loop() {
-//  delay(2000);
-//  LOGN("---60----");
-//  while(!servo.write(90)){}
-//  delay(2000);
-//  while(!servo.write(0)){}
-//  LOGN("---0---");
+  delay(2000);
+  while(!servo.write(150)){}
+  LOGN("---180---");
+  delay(2000);
+  LOGN("---90----");
+  while(!servo.write(90)){}
+  delay(2000);
+  while(!servo.write(0)){}
+  LOGN("---0---");
 }
