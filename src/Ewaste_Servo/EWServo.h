@@ -21,6 +21,7 @@ class EWServo {
     void testPositionControl(int pos); //There's a weird bug in this where it will not maintain position unless its told to hold it infinitely...
     void setPIDGains(float kp = 0.1f, float ki = 0.1f, float kd = 0.1f);
     void setDriveLims(int min, int max); //sets the min and max drive signal allowed for the servo, varies dramatically based on the driver used 
+    void setAnalogLims(int min, int max);
     float testSpeed(int drive); //times servo motion from a starting position to near the minimum analog
     void autoCalibrate(); //Automatically finds the minimum driving force and the potentiometer limits
     void driveStop(); //stops driving the servo

@@ -35,7 +35,10 @@ void EWServo::setDriveLims(int min, int max) {
   pid->setSaturation(min, max);
 }
 
-void EWServo::setAnalogLims(
+void EWServo::setAnalogLims(int min, int max){
+  max_analog = max;
+  min_analog = min;
+}
 
 void EWServo::autoCalibrate() {
   int *ex;
