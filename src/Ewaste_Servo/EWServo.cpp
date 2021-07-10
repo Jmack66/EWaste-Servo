@@ -10,22 +10,19 @@ EWServo::EWServo(int in1, int in2, int out) {
   this->setAll();
 }
 
+
 void EWServo::setLims(int min, int max) {
   min_servo = min;
   max_servo = max;
-}
-
-void EWServo::setSpeed(int speed) {
-  drive = speed;
 }
 
 void EWServo::setTolerance(int tol) {
   tolerance = tol;
 }
 
-void EWServo::setAll(int min, int max, int tol, int speed) {
+
+void EWServo::setAll(int min, int max, int tol) {
   setLims(min, max);
-  setSpeed(speed);
   setTolerance(tol);
 }
 
@@ -34,16 +31,21 @@ void EWServo::setPIDGains(float kp, float ki, float kd) {
   pid = new internalPID(kp, ki, kd);
 }
 
-void EWServo::setDrive(int min, int max) {
+void EWServo::setDriveLims(int min, int max) {
   pid->setSaturation(min, max);
 }
 
-void EWServo::autoCalibrate(){
-   int min_d = testMinDriveSignal() + 30; // +30 is a buffer to ensure motion
-   int *ex = testAnalogExtremes(min_d + 50);
-   max_analog = *(ex);
-   min_analog = *(ex+1);
-   setDrive(min_d ,min_d + 150);
+void EWServo::setAnalogLims(
+
+void EWServo::autoCalibrate() {
+  int *ex;
+  int min_d = testMinDriveSignal() + 30; // +30 is a buffer to ensure motion
+  LOGN("Min drive found: " + String(min_d));
+  ex = testAnalogExtremes(min_d + 20);
+  max_analog = *(ex + 0);
+  min_analog = *(ex + 1);
+  setDriveLims(min_d , min_d + 250);
+  LOGN("Pot extremes found: " + String(max_analog) + ", " + String(min_analog));
 }
 
 
@@ -51,7 +53,7 @@ int* EWServo::testAnalogExtremes(int drive) {
   //drive for a little check if the change in pot is meaningful then go the same in the other direction
   bool min_found = false;
   bool max_found = false;
-  int extremes[2];
+  static int extremes[2];
   while (!min_found || !max_found) {
     driveStop();
     float start = micros() / 1000000.0f;
@@ -80,12 +82,12 @@ int* EWServo::testAnalogExtremes(int drive) {
     }
   }
   driveStop();
-  LOGN("Max pot pos: " + String(max_analog));
-  LOGN("Min pot pos: " + String(min_analog));
+  LOGN("Max pot pos: " + String(extremes[0]));
+  LOGN("Min pot pos: " + String(extremes[1]));
   return extremes;
 }
 
-//There's a weird bug in this where it will not maintain position unless its told to hold it infinitely...
+
 void EWServo::testPositionControl(int pos) {
   int hits = 0;
   while (hits < 100) {
@@ -100,6 +102,7 @@ void EWServo::testPositionControl(int pos) {
   write(pos);
   LOGN("TEST COMPLETE");
 }
+
 
 int EWServo::testMinDriveSignal() {
   int start_pos = analogRead(feedback);
@@ -117,16 +120,17 @@ int EWServo::testMinDriveSignal() {
   return i;
 }
 
+
 float EWServo::testSpeed(int drive) {
   // delay(1000);
   float start = micros() / 1000000.0f;
   float current = 0.0f;
   pot_pos = analogRead(feedback);
   int start_pos = pot_pos;
-  while (pot_pos > 5) {
+  while (pot_pos > min_analog + 5) {
     digitalWrite(input1, LOW);
     pot_pos = analogRead(feedback);
-    analogWrite(input2, drive);
+    analogWrite(input2, min_drive + 80);
     current = micros() / 1000000.0f;
   }
   //  LOGN("From " + String(start_pos));
@@ -136,8 +140,7 @@ float EWServo::testSpeed(int drive) {
   return current - start;
 }
 
-//Takes in a position in degrees
-//Position gets mapped to the potentiometer scale and the PID loop runs until the servo reaches the desired position
+
 bool EWServo::write(int pos) {
   pot_pos = analogRead(feedback);
   pos = map(pos, min_servo, max_servo, min_analog + tolerance, max_analog - tolerance);
@@ -151,7 +154,7 @@ bool EWServo::write(int pos) {
   }
   pid->setSetpoint(pos);
   auto out = pid->update(pot_pos);
-  LOGN(out);
+  //LOGN(out);
   if (out < 0) {
     driveNeg(abs(out));
   }
@@ -179,12 +182,13 @@ void EWServo::drivePos(int power) {
   analogWrite(input1, power);
 }
 
-//drives the Servo in the negative direction
+
 void EWServo::driveStop() {
   digitalWrite(input1, LOW);
   analogWrite(input2, 0);
 }
 
+//drives the Servo in the negative direction
 void EWServo::driveNeg(int power) {
   digitalWrite(input1, LOW);
   analogWrite(input2, power);
